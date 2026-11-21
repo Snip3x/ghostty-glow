@@ -23,26 +23,52 @@ and only black and dark greys stay unlit.
 
 ## Install
 
+### One command
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Snip3x/ghostty-glow/main/install.sh | sh
+```
+
+Want the matching green theme too?
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Snip3x/ghostty-glow/main/install.sh | sh -s -- --theme
+```
+
+Then reload Ghostty (`ctrl+shift+,`) or open a new window. That's it.
+
+The script:
+- copies the shader to `~/.config/ghostty/shaders/glow.glsl`
+- backs up your config to `config.bak-ghostty-glow`
+- adds a `custom-shader = ...` line to your config (skipped if it's already there)
+- with `--theme`, installs `glow-forest` and adds `theme = glow-forest`
+
+It works on Linux and macOS (any POSIX `sh`, needs `curl` or `wget`).
+
+### From a clone
+
 ```sh
 git clone https://github.com/Snip3x/ghostty-glow
 cd ghostty-glow
-./install.sh
+./install.sh            # or: ./install.sh --theme
 ```
-
-Then add the following to your Ghostty config (`~/.config/ghostty/config`):
-
-```ini
-custom-shader = ~/.config/ghostty/shaders/glow.glsl
-
-# optional matching theme
-theme = glow-forest
-```
-
-Reload the config (`ctrl+shift+,` by default) or open a new window.
 
 ### Manual
 
-Copy `shaders/glow.glsl` anywhere and point `custom-shader` at it.
+1. Download [`shaders/glow.glsl`](shaders/glow.glsl) and save it anywhere, e.g. `~/.config/ghostty/shaders/glow.glsl`.
+2. Add this line to your Ghostty config (`~/.config/ghostty/config` or `config.ghostty`), using the full path:
+   ```ini
+   custom-shader = /home/you/.config/ghostty/shaders/glow.glsl
+   ```
+3. Reload Ghostty (`ctrl+shift+,`).
+
+## Uninstall
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Snip3x/ghostty-glow/main/install.sh | sh -s -- --uninstall
+```
+
+This removes the shader, the theme, and only the config lines the installer added.
 
 ## Tuning
 
