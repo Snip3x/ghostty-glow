@@ -1,9 +1,10 @@
 #!/usr/bin/env sh
 # ghostty-glow installer
 #
-#   ./install.sh               install shader and enable it in your Ghostty config
+#   ./install.sh               install, or if already installed ask: update / revert / cancel
 #   ./install.sh --theme       also install and enable the Glow Forest theme
-#   ./install.sh --uninstall   remove everything this script added
+#   ./install.sh --update      update without asking (keeps a backup of your tweaked shader)
+#   ./install.sh --revert      remove everything this script added (alias: --uninstall)
 #
 # One-liner (no clone needed):
 #   curl -fsSL https://raw.githubusercontent.com/Snip3x/ghostty-glow/main/install.sh | sh
@@ -18,12 +19,13 @@ SHADER="$DIR/shaders/glow.glsl"
 THEME="$DIR/themes/glow-forest"
 
 WITH_THEME=0
-UNINSTALL=0
+MODE=""
 for arg in "$@"; do
     case "$arg" in
         --theme) WITH_THEME=1 ;;
-        --uninstall) UNINSTALL=1 ;;
-        -h|--help) sed -n '2,10p' "$0" 2>/dev/null || true; exit 0 ;;
+        --update) MODE=update ;;
+        --revert|--uninstall) MODE=revert ;;
+        -h|--help) sed -n '2,11p' "$0" 2>/dev/null || true; exit 0 ;;
         *) echo "unknown option: $arg" >&2; exit 1 ;;
     esac
 done
@@ -38,19 +40,54 @@ else
     CONFIG="$DIR/config"
 fi
 
-if [ "$UNINSTALL" -eq 1 ]; then
+echo
+echo "  ▓▒░ ghostty-glow ░▒▓"
+echo
+
+# Already installed? Ask what to do (reads from the terminal, so it works with curl | sh too).
+if [ -z "$MODE" ] && { [ -f "$SHADER" ] || { [ -f "$CONFIG" ] && grep -q "glow.glsl" "$CONFIG"; }; }; then
+    say "ghostty-glow is already installed"
+    if (exec </dev/tty) 2>/dev/null; then
+        printf '\n  [u] update to latest   [r] revert (uninstall)   [c] cancel\n  choice [u]: '
+        read -r ans </dev/tty || ans=""
+        case "$ans" in
+            r|R|revert) MODE=revert ;;
+            c|C|cancel|q|Q) echo "  cancelled, nothing changed."; exit 0 ;;
+            *) MODE=update ;;
+        esac
+        echo
+    else
+        say "no terminal to ask on, updating (use --revert to uninstall)"
+        MODE=update
+    fi
+fi
+
+if [ "$MODE" = revert ]; then
     if [ -f "$CONFIG" ]; then
         tmp="$CONFIG.tmp.$$"
-        # drop each marker line and the setting line right after it
-        awk -v m="$MARK" '$0==m {skip=1; next} skip {skip=0; next} {print}' "$CONFIG" > "$tmp"
+        # drop marker lines + the setting after each, and any custom-shader line pointing at our shader
+        awk -v m="$MARK" -v sh="$SHADER" '
+            $0==m {skip=1; next}
+            skip {skip=0; next}
+            {
+                line=$0; gsub(/[ \t]/, "", line)
+                if (line == "custom-shader=" sh) next
+                print
+            }' "$CONFIG" > "$tmp"
         mv "$tmp" "$CONFIG"
         say "removed ghostty-glow lines from $CONFIG"
     fi
     rm -f "$SHADER" "$THEME"
     say "removed shader and theme files"
     echo
-    echo "  Reload Ghostty (ctrl+shift+,) or open a new window."
+    echo "  Reverted. Reload Ghostty (ctrl+shift+,) or open a new window."
+    echo
     exit 0
+fi
+
+# On update, keep the theme updated too if it was installed before.
+if [ "$MODE" = update ] && [ -f "$THEME" ]; then
+    WITH_THEME=1
 fi
 
 # Fetch a repo file: copy it if we're running from a clone, otherwise download it.
@@ -71,11 +108,14 @@ fetch() { # fetch <repo-path> <dest>
     fi
 }
 
-echo
-echo "  ghostty-glow"
-echo
-
-fetch shaders/glow.glsl "$SHADER"
+# Save the user's tweaked shader before overwriting it.
+NEW_SHADER="$SHADER.new.$$"
+fetch shaders/glow.glsl "$NEW_SHADER"
+if [ -f "$SHADER" ] && ! cmp -s "$SHADER" "$NEW_SHADER"; then
+    cp "$SHADER" "$SHADER.bak"
+    say "your old shader (with any tweaks) -> $SHADER.bak"
+fi
+mv "$NEW_SHADER" "$SHADER"
 say "shader  -> $SHADER"
 
 if [ "$WITH_THEME" -eq 1 ]; then
@@ -113,5 +153,5 @@ fi
 echo
 echo "  Done. Reload Ghostty (ctrl+shift+,) or open a new window."
 echo "  Tweak strength/spread at the top of $SHADER"
-echo "  Undo with: ./install.sh --uninstall"
+echo "  Run the installer again any time to update or revert."
 echo

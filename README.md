@@ -56,7 +56,8 @@ Then reload Ghostty (`ctrl+shift+,`) or open a new window. That's it.
 The script:
 - copies the shader to `~/.config/ghostty/shaders/glow.glsl`
 - backs up your config to `config.bak-ghostty-glow`
-- adds a `custom-shader = ...` line to your config (skipped if it's already there)
+- adds a `custom-shader = ...` line to your config
+- if it is already installed, asks whether to update, revert or cancel
 - with `--theme`, installs `glow-forest` and adds `theme = glow-forest`
 
 It works on Linux and macOS (any POSIX `sh`, needs `curl` or `wget`).
@@ -78,13 +79,31 @@ cd ghostty-glow
    ```
 3. Reload Ghostty (`ctrl+shift+,`).
 
-## Uninstall
+## Update or revert
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/Snip3x/ghostty-glow/main/install.sh | sh -s -- --uninstall
+Run the same install command again. It sees that ghostty-glow is already installed and asks:
+
+```
+  ▓▒░ ghostty-glow ░▒▓
+
+  > ghostty-glow is already installed
+
+  [u] update to latest   [r] revert (uninstall)   [c] cancel
+  choice [u]:
 ```
 
-This removes the shader, the theme, and only the config lines the installer added.
+- **Update** gets the latest shader (and theme, if you installed it). If you tweaked
+  your shader, your version is saved as `glow.glsl.bak` first, so your settings aren't lost.
+- **Revert** removes the shader, the theme and the glow lines from your config. Your
+  other settings and any other shaders stay as they are.
+- **Cancel** changes nothing.
+
+Skip the question with flags:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Snip3x/ghostty-glow/main/install.sh | sh -s -- --update
+curl -fsSL https://raw.githubusercontent.com/Snip3x/ghostty-glow/main/install.sh | sh -s -- --revert
+```
 
 ## Tuning
 
