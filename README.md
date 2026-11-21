@@ -1,12 +1,26 @@
-# ghostty-glow
+<div align="center">
 
-A soft, even text glow shader for [Ghostty](https://ghostty.org).
+# ▓▒░ ghostty-glow ░▒▓
 
-Most glow / bloom shaders pick what to light up by **luma** (perceived brightness).
-That makes greens and whites glow, but blues, reds and oranges barely glow at all,
-even when they're fully saturated. This one uses the **brightest colour channel**
-instead and normalises the glow colour. Every coloured glyph gets the same glow,
-and only black and dark greys stay unlit.
+**Retro CRT phosphor bloom for [Ghostty](https://ghostty.org).**
+
+*Every colour glows, the way it did on an old CRT monitor.*
+
+</div>
+
+Remember how text looked on an old CRT? The phosphor glowed. Light bled softly
+off every character and hung in the dark around it. Green, amber, cyan: they
+all glowed the same.
+
+`ghostty-glow` brings that back to Ghostty without scanlines, flicker or grain.
+You just get a soft bloom around your text.
+
+**What's different:** most bloom shaders choose what glows by *luma*, which is
+how bright a colour looks to your eye. Greens and whites score high, so they
+glow. Blues, reds and oranges score low and barely glow, even at full brightness.
+This shader looks at each colour's **brightest channel** instead and boosts the
+glow to full strength, so every colour glows evenly. Only black and dark greys
+stay unlit.
 
 ![fastfetch with ghostty-glow](assets/preview-fastfetch.png)
 
