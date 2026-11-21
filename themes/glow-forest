@@ -1,0 +1,23 @@
+# Glow Forest - dark green theme made to pair with glow.glsl
+background = #07130e
+foreground = #c8e6d0
+cursor-color = #5ff0a0
+cursor-text = #07130e
+selection-background = #1f4a33
+selection-foreground = #e6fff0
+palette = 0=#0f1f17
+palette = 1=#e06c75
+palette = 2=#5fd38d
+palette = 3=#d7c46a
+palette = 4=#5fa8d3
+palette = 5=#b48ead
+palette = 6=#4fd6be
+palette = 7=#b8d4c0
+palette = 8=#3d5c4a
+palette = 9=#ff8088
+palette = 10=#7ff0a8
+palette = 11=#f0dc84
+palette = 12=#7cc4ee
+palette = 13=#d0a8e0
+palette = 14=#70f0d8
+palette = 15=#e6fff0
