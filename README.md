@@ -8,9 +8,11 @@ even when they're fully saturated. This one uses the **brightest colour channel*
 instead and normalises the glow colour. Every coloured glyph gets the same glow,
 and only black and dark greys stay unlit.
 
-<!-- screenshot: put an image at assets/preview.png and uncomment
-![preview](assets/preview.png)
--->
+![fastfetch with ghostty-glow](assets/preview-fastfetch.png)
+
+![a TUI music player with ghostty-glow](assets/preview-tui.png)
+
+<sub>Both shots use the optional Glow Forest theme with `background-opacity = 0.40` and `background-blur = 30`.</sub>
 
 ## Features
 
